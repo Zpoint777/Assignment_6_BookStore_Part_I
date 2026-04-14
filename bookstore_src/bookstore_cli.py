@@ -22,6 +22,8 @@ def print_menu() -> None:
     print("6. Update a book price")
     print("7. Delete a book")
     print("8. Quit")
+    #New function
+    print("9. Search books by author (Extra Feature)")
 
 
 def welcome_screen() -> None:
@@ -186,6 +188,21 @@ def delete_book(cursor: sqlite3.Cursor) -> None:
         print("Invalid input.")
 
 
+###New
+def search_by_author(cursor: sqlite3.Cursor) -> None:
+    keyword = input("Enter an author name to search: ").strip()
+    cursor.execute(
+        "SELECT bookId, title, author, price FROM book WHERE author LIKE ? ORDER BY title",
+        (f"%{keyword}%",)
+    )
+    rows = cursor.fetchall()
+    print_divider()
+    if rows:
+        for row in rows: print(row)
+    else:
+        print("No books found by that author.")
+
+
 def main() -> None:
     with sqlite3.connect(DB_NAME) as connection:
         cursor = connection.cursor()
@@ -221,10 +238,15 @@ def main() -> None:
                 print_divider()
                 print("Goodbye!")
                 break
+#New function 9
+            elif choice == "9":
+                search_by_author(cursor)
+                pause()
             else:
                 print_divider()
                 print("Invalid option. Try again.")
                 pause()
+
 
 
 if __name__ == "__main__":
